@@ -1,26 +1,139 @@
 
-Image Banks
+January 10 & 31
 ===========
 
-Before we can start coding a video game, we need to have the artwork and other assets. The stage library from CircuitPython we will be using is designed to import an "image bank". These image banks are 16 sprites staked on top of each other, each with a resolution of 16x16 pixels. This means the resulting image bank is 16x256 pixels in size. Also the image bank **must** be saved as a 16-color BMP file, with a pallet of 16 colors. To get a sprite image to show up on the screen, we will load an image bank into memory, select the image from the bank we want to use and then tell CircuitPython where we would like it placed on the screen. 
+I have worked on the following:
 
-.. figure:: https://raw.githubusercontent.com/MotherTeresaHS/ICS3U-2019-Group0/master/space_aliens.bmp
-    :height: 256 px
-    :align: center
-    :alt: Image Bank for Space Aliens
+1. API GATEWAY
 
-    Image Bank for Space Aliens
+2. Error handling
 
-For sound, the stage library can play back :file:`*.wav` files in PCM 16-bit Mono Wave files at 22KHz sample rate. Adafruit has a great learning guide on how to save your sound files to the correct format `here <https://learn.adafruit.com/adafruit-wave-shield-audio-shield-for-arduino/convert-files>`_.
+3. HTML
 
-If you do not want to get into creating your own assets, other people have already made assets available to use. All the assets for this guide can be found in the GitHub repo here:
+4. Cognito
 
-- `space aliens image bank <https://github.com/MotherTeresaHS/ICS3U-2019-Group0/blob/master/space_aliens.bmp>`_
-- `coin sound <https://github.com/MotherTeresaHS/ICS3U-2019-Group0/blob/master/coin.wav>`_
-- `pew sound <https://github.com/MotherTeresaHS/ICS3U-2019-Group0/blob/master/pew2.wav>`_
-- `boom sound <https://github.com/MotherTeresaHS/ICS3U-2019-Group0/blob/master/boom.wav>`_
-- `crash sound <https://github.com/MotherTeresaHS/ICS3U-2019-Group0/blob/master/crash.wav>`_
+5. Sign in
 
-Please download the assets and place them on the PyBadge, in the root directory. Your previoud "Hello, World!" program should restart and run again each time you load a new file onto the PyBadge, hopefully with no errors once more.
+6. Sign out
 
-Assets from other people can be found `here <https://github.com/MotherTeresaHS/ICS3U-2019-Group0/tree/master/docs/image_bank>`_.
+.. code-block:: html
+    :caption: index
+        
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>AWS serverless web app</title>
+        </head>
+        <body>
+            <p><a href="https://protect-your-home.auth.us-east-1.amazoncognito.com/signup?client_id=5kuvupcm2totvfsfh2a731echd&response_type=code&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=https://example.com">Sign up</a></p>
+            <p><a href="./sign-in.html">Sign in</a></p>
+            <p><a href="./sign-out.html">Sign out</a></p>
+        </body>
+    </html>
+
+
+.. raw:: html
+
+
+.. code-block:: html
+    :caption: sign-in
+        
+    <!DOCTYPE html>
+    
+    <html lang="en">
+      <head>
+      <meta charset="utf-8">
+    
+        <!-- Javascript SDKs-->
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="js/amazon-cognito-auth.min.js"></script>
+        <script src="https://sdk.amazonaws.com/js/aws-sdk-2.596.0.min.js"></script>
+        <script src="js/amazon-cognito-identity.min.js"></script>
+        <script src="js/config.js"></script>
+      </head>
+    
+      <body>
+        <form>
+          <h1>Please sign in</h1>
+    
+          <input type="text" id="inputUsername"  placeholder="Email address" name="username" required autofocus>
+          <input type="password" id="inputPassword"  placeholder="Password" name="password" required>
+          <button type="button" onclick="signInButton()">Sign in</button>
+        </form>
+    
+        <br>
+        <div id='logged-in'>
+          <p></p>
+        </div>
+    
+        <p>
+          <a href="./profile.html">Profile</a>
+        </p>
+    
+        <br>
+        <div id='home'>
+          <p>
+            <a href='./index.html'>Home</a>
+          </p>
+        </div>
+    
+        <script>
+    
+          var data = {
+            UserPoolId : _config.cognito.userPoolId,
+            ClientId : _config.cognito.clientId
+          };
+          var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
+          var cognitoUser = userPool.getCurrentUser();
+    
+          function signInButton() {
+            // sign-in to AWS Cognito
+    
+            var authenticationData = {
+              Username : document.getElementById("inputUsername").value,
+              Password : document.getElementById("inputPassword").value,
+            };
+    
+            var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+    
+            var poolData = {
+              UserPoolId : _config.cognito.userPoolId, // Your user pool id here
+              ClientId : _config.cognito.clientId, // Your client id here
+            };
+    
+            var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+    
+            var userData = {
+              Username : document.getElementById("inputUsername").value,
+              Pool : userPool,
+            };
+    
+            var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+    
+            cognitoUser.authenticateUser(authenticationDetails, {
+                onSuccess: function (result) {
+                  var accessToken = result.getAccessToken().getJwtToken();
+                  console.log(result);
+    
+                  //get user info, to show that you are logged in
+                  cognitoUser.getUserAttributes(function(err, result) {
+                      if (err) {
+                        console.log(err);
+                        return;
+                      }
+                      console.log(result);
+                      document.getElementById("logged-in").innerHTML = "You are logged in as: " + result[2].getValue();
+                  });
+    
+                },
+                onFailure: function(err) {
+                  alert(err.message || JSON.stringify(err));
+                },
+            });
+          }
+        </script>
+    
+      </body>
+    </html>
+
+.. raw:: html

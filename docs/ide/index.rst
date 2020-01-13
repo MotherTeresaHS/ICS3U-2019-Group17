@@ -2,7 +2,7 @@
 January 09
 ========
 
-Today i have:
+Today I have:
 
 1. created a new Lambda function
 
@@ -14,9 +14,17 @@ Today i have:
 
 I also practiced and learned what would happen if no actual data is given (ex: fake email that doesn't exist in the table)
 
+5. created a DynamoDB table
+
+6. placed some data into my database for testing
+
+7. changed the “capacity” of the database 
+
+I also worked on Boto3 to deal with the decimal problem in the age number.
 
 .. code-block:: python
 	:linenos:
+	:caption: lambd_funct.py Lambda function
 
    #!/usr/bin/env python3
    
@@ -75,3 +83,5 @@ I also practiced and learned what would happen if no actual data is given (ex: f
        }
    
        return return_var
+
+.. raw:: html
