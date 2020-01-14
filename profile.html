@@ -5,6 +5,7 @@
     <!--Cognito JavaScript-->
     <script src="js/amazon-cognito-identity.min.js"></script>
     <script src="js/config.js"></script>
+    <script src="js/profile.js"></script>
   </head>
 
   <body>
@@ -13,7 +14,7 @@
       <h1>Profile</h1>
     </div>
     <div id='profile'>
-      <p></p>
+      <p>One moment please ...</p>
     </div>
   </div>
 
@@ -23,34 +24,10 @@
         <a href='./index.html'>Home</a>
       </p>
     </div>
-
-
+  </body>
   <script>
-    var data = {
-      UserPoolId : _config.cognito.userPoolId,
-      ClientId : _config.cognito.clientId
-    };
-    var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
-    var cognitoUser = userPool.getCurrentUser();
-
     window.onload = function(){
-      if (cognitoUser != null) {
-        cognitoUser.getSession(function(err, session) {
-            if (err) {
-              alert(err);
-              return;
-            }
-            console.log('session validity: ' + session.isValid());
-
-            // sign out
-            cognitoUser.signOut();
-            console.log("Signed-out");
-        });
-      } else {
-        console.log("Already signed-out")
-      }
+      const temp_var = getUserAttributes();
     }
   </script>
-
-  </body>
 </html>

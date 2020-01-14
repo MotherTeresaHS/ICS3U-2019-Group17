@@ -5,49 +5,29 @@
     <!--Cognito JavaScript-->
     <script src="js/amazon-cognito-identity.min.js"></script>
     <script src="js/config.js"></script>
+    <script src="js/sign-out.js"></script>
   </head>
 
   <body>
-  <div class="container">
+    <div class="container">
+      <div>
+        <h1>Sign Out</h1>
+        <div id='sign-out'>
+          <p>One moment please ...</p>
+        </div>
+      </div>
     <div>
-      <h1>Sign Out</h1>
-      <p>Successfully signed-out</p>
-    </div>
 
     <br>
     <div id='home'>
       <p>
-      <a href='./index.html'>Home</a>
+        <a href='./index.html'>Home</a>
       </p>
     </div>
-  </div>
-
+  </body>
   <script>
-    var data = {
-      UserPoolId : _config.cognito.userPoolId,
-      ClientId : _config.cognito.clientId
-    };
-    var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
-    var cognitoUser = userPool.getCurrentUser();
-
     window.onload = function(){
-      if (cognitoUser != null) {
-        cognitoUser.getSession(function(err, session) {
-            if (err) {
-              alert(err);
-              return;
-            }
-            console.log('session validity: ' + session.isValid());
-
-            // sign out
-            cognitoUser.signOut();
-            console.log("Signed-out");
-        });
-      } else {
-        console.log("Already signed-out")
-      }
+      const temp_var = signOut();
     }
   </script>
-
-  </body>
 </html>
