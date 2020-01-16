@@ -1,0 +1,144 @@
+SIGN-IN.JS
+        // JavaScript File
+        
+        function signInButton() {
+          // sign-in to AWS Cognito
+        
+          var data = {
+              UserPoolId : _config.cognito.userPoolId,
+            ClientId : _config.cognito.clientId
+          };
+          var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
+          var cognitoUser = userPool.getCurrentUser();
+        
+            var authenticationData = {
+            Username : document.getElementById("inputUsername").value,
+            Password : document.getElementById("inputPassword").value,
+          };
+        
+          var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+        
+          var poolData = {
+            UserPoolId : _config.cognito.userPoolId, // Your user pool id here
+            ClientId : _config.cognito.clientId, // Your client id here
+          };
+        
+          var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+        
+          var userData = {
+            Username : document.getElementById("inputUsername").value,
+            Pool : userPool,
+          };
+        
+          var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+        
+          cognitoUser.authenticateUser(authenticationDetails, {
+            onSuccess: function (result) {
+              var accessToken = result.getAccessToken().getJwtToken();
+              console.log(result);
+        
+              //get user info, to show that you are logged in
+                    cognitoUser.getUserAttributes(function(err, result) {
+                        if (err) {
+                            console.log(err);
+                            return;
+                        }
+                        console.log(result);
+                        document.getElementById("logged-in").innerHTML = "You are logged in as: " + result[2].getValue();
+        
+                        // now auto redirect to profile page
+                        window.location.replace("./profile.html");
+                    });
+        
+            },
+            onFailure: function(err) {
+              alert(err.message || JSON.stringify(err));
+            },
+          });
+        }
+
+
+SIGN-OUT.JS
+        // JavaScript File
+        
+        function signOut() {
+          //
+        
+          return_message = "";
+        
+          const data = {
+            UserPoolId : _config.cognito.userPoolId,
+            ClientId : _config.cognito.clientId
+          };
+          const userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
+          const cognitoUser = userPool.getCurrentUser();
+        
+          if (cognitoUser != null) {
+            cognitoUser.getSession(function(err, session) {
+              if (err) {
+                alert(err);
+                return;
+              }
+              console.log('session validity: ' + session.isValid());
+        
+              // sign out
+              cognitoUser.signOut();
+              console.log("Signed-out");
+              return_message = "Signed-out";
+            });
+          } else {
+            console.log("Already signed-out")
+            return_message = "Already signed-out";
+          }
+        
+          const div_user_info = document.getElementById('sign-out');
+          div_user_info.innerHTML = return_message;
+        }
+    
+
+PROFILE.JS
+        // JavaScript File
+        
+        async function getUser(email_address) {
+            // get the user info from API Gate
+        
+            const api_url = 'https://5a4d49p2hb.execute-api.us-east-1.amazonaws.com/prod/user-profile?user_email=' + email_address;
+            const api_response = await fetch(api_url);
+            const api_data = await(api_response).json();
+            console.log(api_data);
+        
+            const div_user_info = document.getElementById('profile');
+            div_user_info.innerHTML = api_data['body'];
+          }
+        
+        function getUserAttributes() {
+          var data = {
+            UserPoolId : _config.cognito.userPoolId,
+            ClientId : _config.cognito.clientId
+          };
+          var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
+          var cognitoUser = userPool.getCurrentUser();
+        
+          if (cognitoUser != null) {
+            cognitoUser.getSession(function(err, session) {
+              if (err) {
+                alert(err);
+                return;
+              }
+              //console.log('session validity: ' + session.isValid());
+        
+              cognitoUser.getUserAttributes(function(err, result) {
+                if (err) {
+                  console.log(err);
+                  return;
+                }
+                // user email address
+                console.log(result[2].getValue());
+                getUser(result[2].getValue())
+              });
+        
+            });
+          } else {
+            console.log("Already signed-out")
+          }
+        }
