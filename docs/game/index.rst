@@ -1,14 +1,14 @@
 .. _game:
 
 ****
-Game
+January 14 - 17
 ****
 
-X
+Brief summury of multiple days
 
 .. toctree::
    :maxdepth: 1
    :glob:
 
-   Background <background>
-   Space Ship <space_ship>
+   January 14/15 & <January_14_15>
+   January 16/17 <January_16_17>
