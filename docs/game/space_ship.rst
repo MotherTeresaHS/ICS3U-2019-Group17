@@ -1,6 +1,6 @@
 .. _space_ship:
 
-Space Ship
+January 16/17
 ==========
 
-X
+I have finished designing with CSS. I have also done post to database and cognito trigger. 
